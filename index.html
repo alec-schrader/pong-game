@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>DRAGON FORCE PING PONG</title>
+    <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+
+    </script>
+  </head>
+  <body>
+    Controls:
+    <ul>
+      <li>press enter to start round</li>
+      <li>'w' and 's' control left player</li>
+      <li>'o' and 'l' control right player</li>
+    </ul>
+    <canvas id="myCanvas" width="700" height="500" style="border: 1px solid rgb(195, 195, 195);">
+      <img src="img/player1.jpg" id="player1" />
+      <img src="img/player2.jpg" id="player2" />
+      <img src="img/ball.jpg" id="ball" />
+    </canvas>
+    <div>
+      player1:
+      <p id="player1">0</p>
+    </div>
+    <div>
+      player2:
+      <p id="player2">0</p>
+    </div>
+    <script>
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      var player1 = {
+        x:50,
+        y:250,
+        img: document.getElementById('player1'),
+        score: 0
+      }
+      var player2 = {
+        x:600,
+        y:250,
+        img: document.getElementById('player2'),
+        score: 0
+      }
+      var ball = {
+        x:350,
+        y:250,
+        img: document.getElementById('ball')
+      }
+      ctx.drawImage(player1.img, player1.x, player1.y, 50,100);
+      ctx.drawImage(player2.img, player2.x, player2.y, 50,100);
+      ctx.drawImage(ball.img, ball.x, ball.y, 50,50);
+      var keys = {};
+      $(document).keydown(function (e) {
+        keys[e.which] = e.which;
+        $.each(keys, function(key,value){
+          switch (value) {
+            case 87://w
+              if(player1.y > 0){
+                player1.y -= 3
+                ctx.drawImage(player1.img, player1.x, player1.y, 50,100);
+              }
+              break;
+            case 83://s
+              if(player1.y < 400){
+                player1.y += 3
+                ctx.drawImage(player1.img, player1.x, player1.y, 50,100);
+              }
+              break;
+            case 79://o
+              if(player2.y > 0){
+                player2.y -= 3
+                ctx.drawImage(player2.img, player2.x, player2.y, 50,100);
+              }
+              break;
+            case 76://l
+              if(player2.y < 400){
+                player2.y += 3
+                ctx.drawImage(player2.img, player2.x, player2.y, 50,100);
+              }
+              break;
+          }
+        })
+      });
+      $(document).keyup(function (e) {
+          delete keys[e.which];
+      });
+      reset()
+      function reset(){
+        console.log('hello')
+        $(window).keypress(function(e) {
+          if(e.keyCode == 13){
+            $(window).unbind('keypress');
+            play({x: '+',  y: Math.floor(Math.random()* 20) - 10});
+          }
+        })
+        player1 = {
+          x:50,
+          y:250,
+          img: document.getElementById('player1'),
+          score: player1.score
+        }
+        player2 = {
+          x:600,
+          y:250,
+          img: document.getElementById('player2'),
+          score: player2.score
+        }
+        ball = {
+          x:350,
+          y:250,
+          img: document.getElementById('ball')
+        }
+      }
+      function play(direction) {
+        console.log(direction.y)
+        if(ball.x <= 0){
+          $(window).unbind('keypress');
+          player2.score++
+          $('#player2').html('<p id="player2">' + player2.score + '</p>').end().appendTo($('#player2'));
+          reset();
+          return
+        }
+        if(ball.x >= 650){
+          $(window).unbind('keypress');
+          player1.score++
+          $('#player1').text(player1.score);
+          console.log(player1.score++)
+          console.log($('#player1').text())
+          reset();
+          return
+        }
+        if(ball.y <= 0){
+          direction.y = Math.floor(Math.random()* 10);
+          console.log(direction.y)
+        }
+        if(ball.y >= 450){
+          direction.y = Math.floor(Math.random()* 10) - 10;
+          console.log(direction.y)
+        }
+        if((ball.y <= player1.y + 100 && ball.y >= player1.y) && (ball.x >= player1.x &&  ball.x <= player1.x + 50)){
+          direction = {
+            x: '+',
+            y: Math.floor(Math.random()* 90) - 45
+          }
+        }
+        if((ball.y <= player2.y + 100 && ball.y >= player2.y) && (ball.x + 50 >= player2.x &&  ball.x + 50 <= player2.x + 50)){
+          direction = {
+            x: '-',
+            y: Math.floor(Math.random()* 90) - 45
+          }
+        }
+
+
+        if(direction.x == '+'){
+          ball.x += 3
+        }else{
+          ball.x -= 3
+        }
+
+        ball.y += direction.y
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(player1.img, player1.x, player1.y, 50,100);
+        ctx.drawImage(player2.img, player2.x, player2.y, 50,100);
+        ctx.drawImage(ball.img, ball.x, ball.y, 50,50);
+        setTimeout(function(){
+          play(direction)
+        },100)
+      }
+    </script>
+  </body>
+</html>
